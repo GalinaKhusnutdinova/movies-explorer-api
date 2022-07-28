@@ -1,7 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const router = require('./routes/index');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -24,8 +27,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/moviesdb');
+app.use(requestLogger); // подключаем логгер запросов
+// за ним идут все обработчики роутов
+app.use(router);
+app.use(errorLogger); // подключаем логгер ошибок
+app.use(errors()); // обработчик ошибок celebrate
 
-app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
-  // console.log(`App listening on port ${PORT}`);
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+    return;
+  }
+
+  res.status(500).send({ message: 'Что-то пошло не так' });
 });
+
+app.listen(PORT);
+
+module.exports = app;
