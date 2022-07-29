@@ -1,17 +1,20 @@
 const express = require('express');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('./routes/index');
+const limiter = require('./middlewares/rateLimit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { MONGO_DB_ADDRESS, PORT_NUMBER } = require('./utils/constants');
 
-const { PORT = 3001 } = process.env;
+const { PORT = PORT_NUMBER, MONGODB_ADDRESS = MONGO_DB_ADDRESS } = process.env;
 const app = express();
 
 const options = {
   origin: [
-    'http://localhost:3000',
+    'http://localhost:3001',
     // 'https://khusnutdinova.student.nomoredomains.xyz',
     // 'https://api.khusnutdinova.student.nomoredomains.xyz',
     // 'http://khusnutdinova.student.nomoredomains.xyz',
@@ -26,9 +29,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/moviesdb');
+mongoose.connect(MONGODB_ADDRESS);
 app.use(requestLogger); // подключаем логгер запросов
 // за ним идут все обработчики роутов
+app.use(helmet());
+app.use(limiter); // число запросов с одного IP в единицу времени ограничено
 app.use(router);
 app.use(errorLogger); // подключаем логгер ошибок
 app.use(errors()); // обработчик ошибок celebrate

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { regexUrl } = require('../utils/utils');
+const { regexUrl } = require('../utils/constants');
 
 // Опишем схему:
 const moviesSchema = new mongoose.Schema({

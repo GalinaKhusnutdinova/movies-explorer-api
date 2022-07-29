@@ -1,27 +1,33 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/users');
-const { MONGO_DUPLICATE_ERROR_CODE } = require('../utils/utils');
+const { MONGO_DUPLICATE_ERROR_CODE } = require('../utils/constants');
 const { generateToken } = require('../utils/jwt');
-
 const ValidationError = require('../errors/ValidationError'); // 400
 const Unauthorized = require('../errors/Unauthorized'); // 401
 const NotFound = require('../errors/NotFound'); // 404
 const Conflict = require('../errors/Conflict'); // 409
-// const InternalServerError = require('../errors/InternalServerError'); // 500
+const {
+  CAST_ERROR,
+  NOT_FOUND_USER,
+  CONFLICT_EMAIL,
+  USER_UPDATE_ERROR,
+  UNAUTHORIZED_USER,
+  INVALID_AVTORIZATION_PARAM,
+} = require('../utils/constants');
 
 // возвращает информацию о пользователе (email и имя)
 module.exports.findOnedUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFound('Пользователь по указанному _id не найден'));
+        next(new NotFound(NOT_FOUND_USER));
         return;
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Переданы некорректные данные при создание пользователя.'));
+        next(new ValidationError(CAST_ERROR));
         return;
       }
       next(err);
@@ -46,7 +52,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
-        next(new Conflict('Пользователь с таким email уже существует'));
+        next(new Conflict(CONFLICT_EMAIL));
         return;
       }
 
@@ -55,7 +61,7 @@ module.exports.createUser = (req, res, next) => {
         // взяли ошибку по первому ключу, и дальше уже в ней смотреть.
         const error = err.errors[errorKeys[0]];
         if (err.name === 'ValidationError' || err.name === 'CastError') {
-          next(new ValidationError(`Переданы некорректные данные при создание пользователя. ${error}`));
+          next(new ValidationError(`${CAST_ERROR}. ${error}`));
           return;
         }
       }
@@ -76,7 +82,7 @@ module.exports.updateUserMe = (req, res, next) => {
       runValidators: true, // данные будут валидированы перед изменением
     },
   )
-    .orFail(() => next(new NotFound('Пользователь с указанным _id не найден.')))
+    .orFail(() => next(new NotFound(NOT_FOUND_USER)))
     .then((data) => res.send(data))
     .catch((err) => {
       if (err.errors) {
@@ -85,12 +91,12 @@ module.exports.updateUserMe = (req, res, next) => {
         // взяли ошибку по первому ключу, и дальше уже в ней смотреть.
         const error = err.errors[errorKeys[0]];
         if (err.name === 'ValidationError' || err.name === 'CastError') {
-          next(new ValidationError(`Переданы некорректные данные при обновлении профиля. ${error}`));
+          next(new ValidationError(`${USER_UPDATE_ERROR} ${error}`));
           return;
         }
       }
       if (err.name === 'CastError') {
-        next(new ValidationError('Переданы некорректные данные при обновлении профиля.'));
+        next(new ValidationError(USER_UPDATE_ERROR));
         return;
       }
       next(err);
@@ -102,14 +108,14 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    next(new Unauthorized('Не передан емейл или пароль'));
+    next(new Unauthorized(UNAUTHORIZED_USER));
     return;
   }
 
   User.findOne({ email }).select('+password')
     .then((foundUser) => {
       if (!foundUser) {
-        throw new Unauthorized('Неправильный емейл или пароль');
+        throw new Unauthorized(INVALID_AVTORIZATION_PARAM);
       }
 
       return Promise.all([
@@ -119,7 +125,7 @@ module.exports.login = (req, res, next) => {
     })
     .then(([user, isPasswordCorrect]) => {
       if (!isPasswordCorrect) {
-        throw new Unauthorized('Неправильный емейл или пароль');
+        throw new Unauthorized(INVALID_AVTORIZATION_PARAM);
       }
 
       return generateToken({ _id: user._id });
