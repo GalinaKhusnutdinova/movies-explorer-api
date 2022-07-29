@@ -1,4 +1,4 @@
-# Проект Movies-lives фронтенд + бэкенд
+# Проект Movies-lives бэкенд
 
 Бэкэнд для проекта Movies-lives, написанный на Express.js. В качестве базы данных используется MongoDB. 
 Стек: JavaScript, Node.js, Express.
