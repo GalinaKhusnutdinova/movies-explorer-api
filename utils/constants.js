@@ -13,7 +13,7 @@ const UNAUTHORIZED_USER = 'Не передан емейл или пароль';
 const INVALID_AVTORIZATION_PARAM = 'Неправильный емейл или пароль';
 
 const MONGO_DB_ADDRESS = 'mongodb://localhost:27017/moviesdb';
-const PORT = 3000;
+const PORT_NUMBER = 3000;
 
 module.exports = {
   MONGO_DUPLICATE_ERROR_CODE,
@@ -29,5 +29,5 @@ module.exports = {
   UNAUTHORIZED_USER,
   INVALID_AVTORIZATION_PARAM,
   MONGO_DB_ADDRESS,
-  PORT,
+  PORT_NUMBER,
 };

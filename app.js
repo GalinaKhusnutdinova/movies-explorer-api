@@ -7,9 +7,10 @@ const mongoose = require('mongoose');
 const router = require('./routes/index');
 const limiter = require('./middlewares/rateLimit');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { MONGO_DB_ADDRESS, PORT_NUMBER } = require('./utils/constants');
+const { PORT_NUMBER } = require('./utils/constants');
+const MONGO_URL = require('./utils/config');
 
-const { PORT = PORT_NUMBER, MONGODB_ADDRESS = MONGO_DB_ADDRESS } = process.env;
+const { PORT = PORT_NUMBER } = process.env;
 const app = express();
 
 const options = {
@@ -29,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // подключаемся к серверу mongo
-mongoose.connect(MONGODB_ADDRESS);
+mongoose.connect(MONGO_URL);
 app.use(requestLogger); // подключаем логгер запросов
 // за ним идут все обработчики роутов
 app.use(helmet());
@@ -48,6 +49,8 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'Что-то пошло не так' });
 });
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(PORT);
+});
 
 module.exports = app;
