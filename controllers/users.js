@@ -85,6 +85,10 @@ module.exports.updateUserMe = (req, res, next) => {
     .orFail(() => next(new NotFound(NOT_FOUND_USER)))
     .then((data) => res.send(data))
     .catch((err) => {
+      if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
+        next(new Conflict(CONFLICT_EMAIL));
+        return;
+      }
       if (err.errors) {
         // получили все ключи
         const errorKeys = Object.keys(err.errors);

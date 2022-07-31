@@ -3,7 +3,7 @@ const { regexUrl } = require('../utils/constants');
 
 module.exports.validationUserUpdate = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(),
+    name: Joi.string().required().min(2).max(30),
     email: Joi.string().required().email(),
 
   }),
@@ -17,7 +17,7 @@ module.exports.validationCreateMovie = celebrate({
     year: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string().required().pattern(new RegExp(regexUrl)),
-    trailer: Joi.string().required().pattern(new RegExp(regexUrl)),
+    trailerLink: Joi.string().required().pattern(new RegExp(regexUrl)),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
     thumbnail: Joi.string().required().pattern(new RegExp(regexUrl)),

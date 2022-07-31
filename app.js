@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
@@ -17,40 +18,36 @@ const options = {
   origin: [
     'http://localhost:3001',
     // 'https://khusnutdinova.student.nomoredomains.xyz',
-    // 'https://api.khusnutdinova.student.nomoredomains.xyz',
+    'https://api.movies-lives.nomoredomains.xyz',
     // 'http://khusnutdinova.student.nomoredomains.xyz',
-    // 'http://api.khusnutdinova.student.nomoredomains.xyz',
+    'http://api.movies-lives.nomoredomains.xyz',
     'https://GalinaKhusnutdinova.github.io',
   ],
   credentials: true, // эта опция позволяет устанавливать куки
 };
 
-app.use('*', cors(options)); // Подключаем первой миддлварой
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 // подключаемся к серверу mongo
 mongoose.connect(MONGO_URL);
 app.use(requestLogger); // подключаем логгер запросов
 // за ним идут все обработчики роутов
-app.use(helmet());
 app.use(limiter); // число запросов с одного IP в единицу времени ограничено
+app.use(helmet());
+app.use('*', cors(options)); // Подключаем первой миддлварой
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(router);
 app.use(errorLogger); // подключаем логгер ошибок
 app.use(errors()); // обработчик ошибок celebrate
 
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   if (err.statusCode) {
-    res.status(err.statusCode).send({ message: err.message });
-    return;
+    return res.status(err.statusCode).send({ message: err.message });
   }
 
   res.status(500).send({ message: 'Что-то пошло не так' });
+  return next();
 });
 
-app.listen(PORT, () => {
-  console.log(PORT);
-});
+app.listen(PORT);
 
 module.exports = app;

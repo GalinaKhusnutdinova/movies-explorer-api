@@ -54,7 +54,7 @@ const moviesSchema = new mongoose.Schema({
     },
   },
   // ссылка на трейлер фильма
-  trailer: {
+  trailerLink: {
     type: String,
     required: true,
     validator: {
