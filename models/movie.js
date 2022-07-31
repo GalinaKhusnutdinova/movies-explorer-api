@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { regexUrl } = require('../utils/constants');
+const isURL = require('validator/lib/isURL');
 
 // Опишем схему:
 const moviesSchema = new mongoose.Schema({
@@ -49,7 +49,8 @@ const moviesSchema = new mongoose.Schema({
     required: true,
     validator: {
       validate: {
-        match: [regexUrl, 'Пожалуйста, заполните действительный URL-адрес'],
+        validator: (v) => isURL(v),
+        message: 'Пожалуйста, заполните действительный URL-адрес',
       },
     },
   },
@@ -59,7 +60,8 @@ const moviesSchema = new mongoose.Schema({
     required: true,
     validator: {
       validate: {
-        match: [regexUrl, 'Пожалуйста, заполните действительный URL-адрес'],
+        validator: (v) => isURL(v),
+        message: 'Пожалуйста, заполните действительный URL-адрес',
       },
     },
   },
@@ -69,7 +71,8 @@ const moviesSchema = new mongoose.Schema({
     required: true,
     validator: {
       validate: {
-        match: [regexUrl, 'Пожалуйста, заполните действительный URL-адрес'],
+        validator: (v) => isURL(v),
+        message: 'Пожалуйста, заполните действительный URL-адрес',
       },
     },
   },

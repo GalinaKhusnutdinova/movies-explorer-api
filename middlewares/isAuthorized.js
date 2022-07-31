@@ -1,10 +1,11 @@
 const { checkToken } = require('../utils/jwt');
 const Unauthorized = require('../errors/Unauthorized'); // 401
+const { UNAUTHORIZED_ACCESS } = require('../utils/constants');
 
 const isAuthorized = (req, res, next) => {
   const auth = req.headers.authorization;
   if (!auth) {
-    next(new Unauthorized('Авторизуйтесь для доступа'));
+    next(new Unauthorized(UNAUTHORIZED_ACCESS));
     return;
   }
 
@@ -14,7 +15,7 @@ const isAuthorized = (req, res, next) => {
   try {
     payload = checkToken(token);
   } catch (err) {
-    next(new Unauthorized('Авторизуйтесь для доступа'));
+    next(new Unauthorized(UNAUTHORIZED_ACCESS));
   }
   req.user = { _id: payload._id };
 

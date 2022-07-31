@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const { regexUrl } = require('../utils/constants');
+const { urlValidator } = require('../utils/constants');
 
 module.exports.validationUserUpdate = celebrate({
   body: Joi.object().keys({
@@ -16,11 +16,11 @@ module.exports.validationCreateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().pattern(new RegExp(regexUrl)),
-    trailerLink: Joi.string().required().pattern(new RegExp(regexUrl)),
+    image: Joi.string().required().custom(urlValidator),
+    trailerLink: Joi.string().required().custom(urlValidator),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required().pattern(new RegExp(regexUrl)),
+    thumbnail: Joi.string().required().custom(urlValidator),
     movieId: Joi.number().required(),
   }),
 });
@@ -42,6 +42,6 @@ module.exports.validationCreateUser = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
   }),
 });

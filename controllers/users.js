@@ -25,13 +25,7 @@ module.exports.findOnedUserMe = (req, res, next) => {
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError(CAST_ERROR));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 // создаёт пользователя с переданными в теле email, password и name

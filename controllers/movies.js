@@ -53,20 +53,7 @@ module.exports.createMovie = (req, res, next) => {
     owner,
   })
     .then((movies) => {
-      res.status(201).send({
-        country: movies.country,
-        director: movies.director,
-        duration: movies.duration,
-        year: movies.year,
-        description: movies.description,
-        image: movies.image,
-        trailerLink: movies.trailerLink,
-        nameRU: movies.nameRU,
-        nameEN: movies.nameEN,
-        thumbnail: movies.thumbnail,
-        movieId: movies.movieId,
-        owner: movies.owner,
-      });
+      res.status(201).send(movies);
     })
     .catch((err) => {
       if (err.errors) {
