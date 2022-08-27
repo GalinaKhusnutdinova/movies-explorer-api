@@ -17,11 +17,12 @@ const app = express();
 const options = {
   origin: [
     'http://localhost:3001',
-    // 'https://khusnutdinova.student.nomoredomains.xyz',
+    'https://movies-lives.nomoredomains.xyz',
     'https://api.movies-lives.nomoredomains.xyz',
-    // 'http://khusnutdinova.student.nomoredomains.xyz',
+    'http://movies-lives.nomoredomains.xyz',
     'http://api.movies-lives.nomoredomains.xyz',
     'https://GalinaKhusnutdinova.github.io',
+    'https://api.nomoreparties.co/',
   ],
   credentials: true, // эта опция позволяет устанавливать куки
 };

@@ -6,22 +6,25 @@ const moviesSchema = new mongoose.Schema({
   // название фильма на русском языке
   nameRU: {
     type: String,
+    default: 'https://bogatyr.club/uploads/posts/2021-11/thumbs/1636953084_1-bogatyr-club-p-glubokii-chernii-fon-1.jpg',
     required: true,
     minlength: 2,
-    maxlength: 30,
+    maxlength: 300,
   },
   // название фильма на английском языке
   nameEN: {
     type: String,
+    default: 'https://bogatyr.club/uploads/posts/2021-11/thumbs/1636953084_1-bogatyr-club-p-glubokii-chernii-fon-1.jpg',
     required: true,
     minlength: 2,
-    maxlength: 30,
+    maxlength: 300,
   },
 
   // страна создания фильма
   country: {
     type: String,
     required: true,
+    default: 'Нет',
   },
   // режиссёр фильма
   director: {
