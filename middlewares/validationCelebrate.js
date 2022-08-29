@@ -11,7 +11,7 @@ module.exports.validationUserUpdate = celebrate({
 
 module.exports.validationCreateMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.string().required(),
+    country: Joi.string().required().default('нет'),
     director: Joi.string().required(),
     duration: Joi.number().required(),
     year: Joi.string().required(),
